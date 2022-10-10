@@ -62,20 +62,22 @@ func mainHandler(c *gin.Context) {
 }
 
 func main() {
-
 	hostAndPort := fmt.Sprintf("%s:%d", host, port)
 	log.Printf("Starting http server on %s\n", hostAndPort)
 
 	r := gin.Default()
 	r.GET("/", mainHandler)
 	r.Use(static.Serve("/static/", static.LocalFile("./static", false)))
-	r.GET("/:shortenerID", shortenerIDHandler)
 
 	initShortener()
 
 	defer sqliteDatabase.Close()
 
-	if err := r.Run(":9080"); err != nil {
-		log.Fatal(err)
-	}
+	multidom := make(MultiDomainRouter)
+	multidom["dashboard.localhost:9080"] = r
+
+	http.ListenAndServe(":9080", multidom)
+	//if err := r.Run(":9080"); err != nil {
+	//	log.Fatal(err)
+	//}
 }
