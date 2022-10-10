@@ -76,8 +76,7 @@ func main() {
 	multidom := make(MultiDomainRouter)
 	multidom["dashboard.localhost:9080"] = r
 
-	http.ListenAndServe(":9080", multidom)
-	//if err := r.Run(":9080"); err != nil {
-	//	log.Fatal(err)
-	//}
+	if err := http.ListenAndServe(":9080", multidom); err != nil {
+		log.Fatal(err)
+	}
 }
