@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-contrib/static"
-	"github.com/Masterminds/sprig"
-	"github.com/gin-gonic/gin"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
+
+	"github.com/Masterminds/sprig"
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
 )
 
 type Page struct {
+	IsAdmin  bool
 	URLCount int
 }
 
@@ -46,6 +48,14 @@ func display(c *gin.Context, tmpl string, data interface{}) {
 	}
 }
 
+func adminHandler(c *gin.Context) {
+	page := Page{
+		IsAdmin: true,
+	}
+
+	display(c, "admin", &page)
+}
+
 func mainHandler(c *gin.Context) {
 	page := Page{
 		URLCount: getURLCount(sqliteDatabase),
@@ -56,7 +66,15 @@ func mainHandler(c *gin.Context) {
 
 func getDashboardRouter() *gin.Engine {
 	r := gin.Default()
+
 	r.GET("/", mainHandler)
+
+	authorized := r.Group("/admin", gin.BasicAuth(gin.Accounts{
+		"foo": "bar",
+	}))
+
+	authorized.GET("/", adminHandler)
+
 	r.Use(static.Serve("/static/", static.LocalFile("./static", false)))
 	return r
 }

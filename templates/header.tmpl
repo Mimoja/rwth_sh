@@ -7,24 +7,28 @@
 		<script src="/static/js/jquery-3.2.1.slim.min.js"></script>
 		<link rel="stylesheet" href="/static/css/bootstrap.min.css">
 		<script src="/static/js/bootstrap.min.js"></script>
+		<script src="/static/js/utils.js"></script>
 		<style type="text/css">
 			body {padding-bottom: 70px;}
 			.content {margin:10px;}
 		</style>
 	</head>
 	<body>
-	    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
-			 <a class="navbar-brand" href="/">RWTH URL Shortener</a>
-	         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
+		<a class="navbar-brand" href="/">RWTH URL Shortener</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
-			 </button>
+			</button>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="/">Home</a>
+						<a class="nav-link" href="/admin">Admin</a>
 					</li>
 				</ul>
+				{{if .IsAdmin}}
+					<button type="button" class="btn btn-dark" onclick="logout()">Logout</button>
+				{{end}}
 			</div>
-	    </nav>
+		</nav>
 {{end}}
