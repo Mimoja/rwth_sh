@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"go-link-shortener/server/dashboard"
+	. "go-link-shortener/server/database"
 	. "go-link-shortener/server/router"
 )
 
@@ -16,12 +17,13 @@ func main() {
 	hostAndPort := fmt.Sprintf("%s:%d", host, port)
 	log.Printf("Starting http server on %s\n", hostAndPort)
 
+	InitDatabase()
 	InitShortener()
 
 	multidom := make(MultiDomainRouter)
 	multidom["dashboard.localhost:9080"] = dashboard.GetDashboardRouter()
 
-	defer SqliteDatabase.Close()
+	defer Database.Close()
 
 	if err := http.ListenAndServe(":9080", multidom); err != nil {
 		log.Fatal(err)

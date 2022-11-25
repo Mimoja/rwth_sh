@@ -12,6 +12,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 
+	. "go-link-shortener/server/database"
 	"go-link-shortener/server/router"
 )
 
@@ -64,7 +65,7 @@ func adminHandler(c *gin.Context) {
 
 func mainHandler(c *gin.Context) {
 	page := Page{
-		URLCount: router.GetURLCount(router.SqliteDatabase),
+		URLCount: router.GetURLCount(Database),
 	}
 
 	display(c, "main", &page)
