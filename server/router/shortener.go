@@ -1,32 +1,33 @@
-package main
+package router
 
 import (
 	"database/sql"
 	"fmt"
-	"github.com/mattn/go-sqlite3"
-	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
 	"log"
 	"net/http"
+
+	"github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
 )
 
-var sqliteDatabase *sql.DB
+var SqliteDatabase *sql.DB
 
-func initShortener() {
+func InitShortener() {
 
 	log.Println("sqlite-database.db created")
 
-	sqliteDatabase, _ = sql.Open("sqlite3", "./sqlite-database.db") // Open the created SQLite File
-	createTable(sqliteDatabase)
+	SqliteDatabase, _ = sql.Open("sqlite3", "./sqlite-database.db") // Open the created SQLite File
+	createTable(SqliteDatabase)
 
-	insertURL(sqliteDatabase, "rwth.sh", "abc", "https://google.com", "test entry")
-	insertURL(sqliteDatabase, "abc.rwth.sh", "abc", "https://google.com", "test entry 2")
-	insertURL(sqliteDatabase, "o.rwth.sh", "", "https://online.rwth-aachen.de", "test entry 2")
+	insertURL(SqliteDatabase, "rwth.sh", "abc", "https://google.com", "test entry")
+	insertURL(SqliteDatabase, "abc.rwth.sh", "abc", "https://google.com", "test entry 2")
+	insertURL(SqliteDatabase, "o.rwth.sh", "", "https://online.rwth-aachen.de", "test entry 2")
 
-	getURLs(sqliteDatabase)
+	getURLs(SqliteDatabase)
 }
 
-func shortenerHandler(w http.ResponseWriter, r *http.Request) {
-	url, err := getURL(sqliteDatabase, r.Host, r.RequestURI[1:])
+func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
+	url, err := getURL(SqliteDatabase, r.Host, r.RequestURI[1:])
 	if err != nil {
 		http.Error(w, "Not found", 404)
 	}
@@ -69,7 +70,7 @@ func insertURL(db *sql.DB, domain string, short string, long string, comment str
 	}
 }
 
-func getURLCount(db *sql.DB) int {
+func GetURLCount(db *sql.DB) int {
 	row, err := db.Query("SELECT count(*) FROM urls")
 	if err != nil {
 		log.Fatal(err)

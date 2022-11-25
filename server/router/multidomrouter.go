@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
 	"net/http"
@@ -10,7 +10,6 @@ func (hs MultiDomainRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if handler := hs[r.Host]; handler != nil {
 		handler.ServeHTTP(w, r)
 	} else {
-		shortenerHandler(w, r);
+		ShortenerHandler(w, r)
 	}
 }
-

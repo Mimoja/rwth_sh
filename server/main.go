@@ -2,28 +2,26 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"go-link-shortener/server/dashboard"
+	. "go-link-shortener/server/router"
 )
 
 const host = ""
 const port = 9080
 
-func errorResponse(c *gin.Context, code int, err string) {
-	c.String(code, "error %d: %s", code, err)
-}
-
 func main() {
 	hostAndPort := fmt.Sprintf("%s:%d", host, port)
 	log.Printf("Starting http server on %s\n", hostAndPort)
 
-	initShortener()
+	InitShortener()
 
 	multidom := make(MultiDomainRouter)
-	multidom["dashboard.localhost:9080"] = getDashboardRouter()
+	multidom["dashboard.localhost:9080"] = dashboard.GetDashboardRouter()
 
-	defer sqliteDatabase.Close()
+	defer SqliteDatabase.Close()
 
 	if err := http.ListenAndServe(":9080", multidom); err != nil {
 		log.Fatal(err)

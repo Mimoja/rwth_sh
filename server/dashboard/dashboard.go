@@ -1,4 +1,4 @@
-package main
+package dashboard
 
 import (
 	"fmt"
@@ -11,6 +11,8 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+
+	"go-link-shortener/server/router"
 )
 
 type Page struct {
@@ -19,6 +21,10 @@ type Page struct {
 }
 
 const templateFolder = "templates"
+
+func errorResponse(c *gin.Context, code int, err string) {
+	c.String(code, "error %d: %s", code, err)
+}
 
 func getAllTemplates() []string {
 	templateFiles := []string{}
@@ -58,13 +64,13 @@ func adminHandler(c *gin.Context) {
 
 func mainHandler(c *gin.Context) {
 	page := Page{
-		URLCount: getURLCount(sqliteDatabase),
+		URLCount: router.GetURLCount(router.SqliteDatabase),
 	}
 
 	display(c, "main", &page)
 }
 
-func getDashboardRouter() *gin.Engine {
+func GetDashboardRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/", mainHandler)
