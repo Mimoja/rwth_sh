@@ -12,14 +12,19 @@ import (
 
 func PublicRoutes(g *gin.RouterGroup) {
 	g.GET("/", handlers.IndexGetHandler)
+	g.GET("/login", handlers.LoginGetHandler)
+	g.POST("/login", handlers.LoginPostHandler)
 }
 
 func PrivateRoutes(g *gin.RouterGroup) {
+	g.GET("/dashboard", handlers.IndexGetHandler)
+	g.GET("/logout", handlers.LogoutGetHandler)
 }
 
 func GetDashboardRouter() *gin.Engine {
-	router := gin.Default()
+	gin.SetMode(gin.DebugMode)
 
+	router := gin.Default()
 	router.Static("/static/", "./static")
 	router.LoadHTMLGlob("templates/*.tmpl")
 

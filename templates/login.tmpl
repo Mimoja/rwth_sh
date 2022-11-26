@@ -1,0 +1,26 @@
+{{define "login"}}
+{{template "header" .}}
+<div class="content">
+
+	<div class="container">
+		<div class="col-md-12 mb-4">
+			<h2>Login</h2>
+			
+			{{if .message}}
+				<div>{{.message}}</div>
+			{{end}}
+			<form action="/login" method="post">
+				<div class="mb-3">
+					<label for="username1" class="form-label">Username</label>
+					<input type="text" class="form-control" id="username1" name="username">
+				</div>
+				<div class="mb-3">
+					<label for="password1" class="form-label">Passwort</label>
+					<input type="password" class="form-control" id="password1" name="password">
+				</div>
+				<button type="submit" class="btn btn-primary">Login</button>
+			</form>
+		</div>
+	</div>
+{{template "footer" .}}
+{{end}}
