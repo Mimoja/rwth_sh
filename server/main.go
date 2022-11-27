@@ -1,31 +1,34 @@
 package main
 
 import (
+	. "go-link-shortener/server/database"
+
 	"fmt"
+	"go-link-shortener/server/dashboard"
+	. "go-link-shortener/server/globals"
+	. "go-link-shortener/server/router"
 	"log"
 	"net/http"
-
-	"go-link-shortener/server/dashboard"
-	. "go-link-shortener/server/database"
-	. "go-link-shortener/server/router"
 )
 
-const host = ""
-const port = 9080
-
 func main() {
-	hostAndPort := fmt.Sprintf("%s:%d", host, port)
+	appConf := ConfigInit("config.yaml")
+
+	hostAndPort := fmt.Sprintf("%s:%d", appConf.Server.Hostname, appConf.Server.Port)
 	log.Printf("Starting http server on %s\n", hostAndPort)
 
 	InitDatabase()
 	InitShortener()
 
 	multidom := make(MultiDomainRouter)
-	multidom["dashboard.localhost:9080"] = dashboard.GetDashboardRouter()
+
+	dashboard_url := fmt.Sprintf("%s.%s", appConf.Dashboard.Subdomain, hostAndPort)
+	multidom[dashboard_url] = dashboard.GetDashboardRouter()
 
 	defer Database.Close()
 
-	if err := http.ListenAndServe(":9080", multidom); err != nil {
+	sPort := fmt.Sprintf(":%d", appConf.Server.Port)
+	if err := http.ListenAndServe(sPort, multidom); err != nil {
 		log.Fatal(err)
 	}
 }

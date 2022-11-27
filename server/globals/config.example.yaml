@@ -1,0 +1,10 @@
+dashboard:
+  subdomain: dashboard
+
+  admin:
+    username: SOMEUSER
+    password: SOME-SHA256-PW
+
+server:
+  hostname: HOSTNAME
+  port: 1234
