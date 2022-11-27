@@ -37,30 +37,3 @@ func LoginGetHandler(c *gin.Context) {
 		})
 	}
 }
-
-func LoginPostHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	user := session.Get(globals.Userkey)
-	if user != nil {
-		c.HTML(http.StatusBadRequest, "login", gin.H{
-			"message": "Please logout first",
-		})
-		return
-	}
-
-	username := c.PostForm("username")
-	// password := c.PostForm("password")
-
-	log.Println("logging in user:", username, c.Request.PostForm)
-
-	session.Set(globals.Userkey, username)
-
-	if err := session.Save(); err != nil {
-		c.HTML(http.StatusInternalServerError, "login", gin.H{
-			"message": "Failed to save session",
-		})
-		return
-	}
-
-	c.Redirect(http.StatusMovedPermanently, "/dashboard")
-}

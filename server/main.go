@@ -2,17 +2,18 @@ package main
 
 import (
 	. "go-link-shortener/server/database"
+	"go-link-shortener/server/globals"
 
 	"fmt"
 	"go-link-shortener/server/dashboard"
-	. "go-link-shortener/server/globals"
 	. "go-link-shortener/server/router"
 	"log"
 	"net/http"
 )
 
 func main() {
-	appConf := ConfigInit("config.yaml")
+	appConf := globals.ConfigInit("config.yaml")
+	globals.Config = *appConf
 
 	hostAndPort := fmt.Sprintf("%s:%d", appConf.Server.Hostname, appConf.Server.Port)
 	log.Printf("Starting http server on %s\n", hostAndPort)
