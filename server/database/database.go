@@ -19,5 +19,8 @@ func InitDatabase() {
 	}
 
 	log.Println("sqlite-database.db created")
+
+	RunMigrations(database)
+
 	Database = database
 }

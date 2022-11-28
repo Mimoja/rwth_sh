@@ -9,9 +9,11 @@ import (
 	. "go-link-shortener/server/database"
 )
 
-func InitShortener() {
-	createTable(Database)
+type DomainRow struct {
+	Domain, Short, Long, Desc string
+}
 
+func InitShortener() {
 	insertURL(Database, "rwth.sh", "abc", "https://google.com", "test entry")
 	insertURL(Database, "abc.rwth.sh", "abc", "https://google.com", "test entry 2")
 	insertURL(Database, "o.rwth.sh", "", "https://online.rwth-aachen.de", "test entry 2")
@@ -28,29 +30,10 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
-func createTable(db *sql.DB) {
-	createTableSQL := `CREATE TABLE urls (
-		"domain" TEXT NOT NULL,
-		"short" TEXT NOT NULL,
-		"long" TEXT,
-		"comment" TEXT,
-		PRIMARY KEY ("domain", "short")
-	  );` // SQL Statement for Create Table
-
-	log.Println("Create url table...")
-	statement, err := db.Prepare(createTableSQL) // Prepare SQL Statement
-	if err != nil {
-		log.Println("error: ", err)
-		return
-	}
-	statement.Exec() // Execute SQL Statements
-	log.Println("url table created")
-}
-
 // We are passing db reference connection from main to our method with other parameters
 func insertURL(db *sql.DB, domain string, short string, long string, comment string) {
 	log.Println("Inserting url record ...")
-	insertStudentSQL := `INSERT INTO urls(domain, short, long, comment) VALUES (?, ?, ?, ?)`
+	insertStudentSQL := `INSERT INTO urls(domain, path, target, comment) VALUES (?, ?, ?, ?)`
 	statement, err := db.Prepare(insertStudentSQL) // Prepare statement.
 	// This is good to avoid SQL injections
 	if err != nil {
@@ -77,19 +60,29 @@ func GetURLCount(db *sql.DB) int {
 	return -1
 }
 
-func printStoredURLs(db *sql.DB) {
+func GetStoredURLs(db *sql.DB) []DomainRow {
 	row, err := db.Query("SELECT * FROM urls")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer row.Close()
-	for row.Next() { // Iterate and fetch the records from result cursor
-		var short string
-		var long string
-		var desc string
 
-		row.Scan(&short, &long, &desc)
-		println(short, " -> ", long, desc)
+	defer row.Close()
+
+	// Iterate and fetch the records from result cursor
+	result := make([]DomainRow, 0)
+	for row.Next() {
+		var domain, short, long, desc string
+		row.Scan(&domain, &short, &long, &desc)
+		result = append(result, DomainRow{domain, short, long, desc})
+	}
+	return result
+}
+
+func printStoredURLs(db *sql.DB) {
+	rows := GetStoredURLs(db)
+	println("Stored URLs:", len(rows))
+	for _, r := range rows {
+		println(r.Domain, r.Short, " -> ", r.Long, r.Desc)
 	}
 }
 
