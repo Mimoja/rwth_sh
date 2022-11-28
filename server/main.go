@@ -18,7 +18,7 @@ func main() {
 	hostAndPort := fmt.Sprintf("%s:%d", appConf.Server.Hostname, appConf.Server.Port)
 	log.Printf("Starting http server on %s\n", hostAndPort)
 
-	InitDatabase()
+	InitDatabase(appConf.Database.Path)
 	InitShortener()
 
 	multidom := make(MultiDomainRouter)

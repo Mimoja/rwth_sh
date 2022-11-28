@@ -23,6 +23,10 @@ type AppConfig struct {
 		Hostname string
 		Port     uint16
 	}
+
+	Database struct {
+		Path string
+	}
 }
 
 func ConfigInit(file string) *AppConfig {

@@ -8,3 +8,6 @@ dashboard:
 server:
   hostname: HOSTNAME
   port: 1234
+
+database:
+  path: YOUR_SQLITE_LOCATION
