@@ -2,6 +2,7 @@ package globals
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 	"strings"
 
@@ -45,12 +46,12 @@ func ConfigInit(file string) *AppConfig {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			panic(fmt.Errorf("fatal error: couldn't load config file: %W | %T", err, err))
+			log.Panic(fmt.Errorf("fatal error: couldn't load config file: %W | %T", err, err))
 		}
 	}
 
 	if err := viper.Unmarshal(&appConf); err != nil {
-		panic(fmt.Errorf("fatal error: couldn't Unmarshal config: %W", err))
+		log.Panic(fmt.Errorf("fatal error: couldn't Unmarshal config: %W", err))
 	}
 
 	return &appConf

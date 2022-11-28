@@ -16,7 +16,7 @@ func LogoutGetHandler(c *gin.Context) {
 	user := session.Get(globals.Userkey)
 
 	if user == nil {
-		panic("not logged in user reached this page")
+		log.Panic("not logged in user reached this page")
 	}
 
 	log.Println("logging out user:", user)
