@@ -2,21 +2,26 @@ package router
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	. "go-link-shortener/server/database"
 )
 
+var InsertUniqueError = errors.New("Unique constraint failed")
+
 type DomainRow struct {
-	Domain, Short, Long, Desc string
+	Subdomain, Path, Target, Comment string
+	Id                               uint32
 }
 
 func InitShortener() {
-	insertURL(Database, "rwth.sh", "abc", "https://google.com", "test entry")
-	insertURL(Database, "abc.rwth.sh", "abc", "https://google.com", "test entry 2")
-	insertURL(Database, "o.rwth.sh", "", "https://online.rwth-aachen.de", "test entry 2")
+	InsertURL(Database, DomainRow{"", "abc", "https://google.com", "test entry", 0})
+	InsertURL(Database, DomainRow{"abc", "abc", "https://google.com", "test entry 2", 0})
+	InsertURL(Database, DomainRow{"o", "", "https://online.rwth-aachen.de", "test entry 2", 0})
 
 	printStoredURLs(Database)
 }
@@ -31,19 +36,37 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // We are passing db reference connection from main to our method with other parameters
-func insertURL(db *sql.DB, domain string, short string, long string, comment string) {
+func InsertOrUpdateURL(db *sql.DB, entry DomainRow, update bool) error {
 	log.Println("Inserting url record ...")
-	insertStudentSQL := `INSERT INTO urls(domain, path, target, comment) VALUES (?, ?, ?, ?)`
-	statement, err := db.Prepare(insertStudentSQL) // Prepare statement.
+	query := `INSERT INTO urls(subdomain, path, target, comment) VALUES (?, ?, ?, ?)`
+	if update {
+		query = `UPDATE urls subdomain=?, path=?, target=?, comment=? WHERE id=?`
+	}
+
+	statement, err := db.Prepare(query) // Prepare statement.
 	// This is good to avoid SQL injections
 	if err != nil {
 		log.Fatalln("Prepare failed", err.Error())
 	}
-	_, err = statement.Exec(domain, short, long, comment)
-	if err != nil {
-		log.Println(err.Error())
-		return
+
+	if update {
+		_, err = statement.Exec(entry.Subdomain, entry.Path, entry.Target, entry.Comment, entry.Id)
+	} else {
+		_, err = statement.Exec(entry.Subdomain, entry.Path, entry.Target, entry.Comment)
 	}
+
+	if err != nil {
+		if strings.Index(err.Error(), "UNIQUE constraint failed") == 0 {
+			return InsertUniqueError
+		} else {
+			log.Panic(err)
+		}
+	}
+	return nil
+}
+
+func InsertURL(db *sql.DB, entry DomainRow) error {
+	return InsertOrUpdateURL(db, entry, false)
 }
 
 func GetURLCount(db *sql.DB) int {
@@ -71,9 +94,10 @@ func GetStoredURLs(db *sql.DB) []DomainRow {
 	// Iterate and fetch the records from result cursor
 	result := make([]DomainRow, 0)
 	for row.Next() {
-		var domain, short, long, desc string
-		row.Scan(&domain, &short, &long, &desc)
-		result = append(result, DomainRow{domain, short, long, desc})
+		var domainRow DomainRow
+
+		row.Scan(&domainRow.Subdomain, &domainRow.Path, &domainRow.Target, &domainRow.Comment, &domainRow.Id)
+		result = append(result, domainRow)
 	}
 	return result
 }
@@ -82,23 +106,21 @@ func printStoredURLs(db *sql.DB) {
 	rows := GetStoredURLs(db)
 	println("Stored URLs:", len(rows))
 	for _, r := range rows {
-		println(r.Domain, r.Short, " -> ", r.Long, r.Desc)
+		fmt.Printf("%d: %s.HOST/%s -> %s [%s]\n", r.Id, r.Subdomain, r.Path, r.Target, r.Comment)
 	}
 }
 
 func getURL(db *sql.DB, domain string, short string) (string, error) {
-	row := db.QueryRow("SELECT * FROM urls WHERE domain=? AND short=?", domain, short)
+	row := db.QueryRow("SELECT target FROM urls WHERE domain=? AND short=?", domain, short)
 	if row == nil {
 		return "", fmt.Errorf("Failed to querry row")
 	}
 
 	// Parse row into Activity struct
-	var long string
-	var desc string
-	var err error
-	if err = row.Scan(&domain, &short, &long, &desc); err == sql.ErrNoRows {
+	var target string
+	if err := row.Scan(target); err == sql.ErrNoRows {
 		log.Printf("Id not found")
 		return "", sql.ErrNoRows
 	}
-	return long, nil
+	return target, nil
 }
