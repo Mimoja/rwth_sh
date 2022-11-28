@@ -15,20 +15,28 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
-		<a class="navbar-brand" href="/">RWTH URL Shortener</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/">RWTH URL Shortener</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
 
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto">
-					<li class="nav-item">
-						<a class="nav-link" href="/admin">Admin</a>
-					</li>
-				</ul>
-				{{if .IsAdmin}}
-					<button type="button" class="btn btn-dark" onclick="logout()">Logout</button>
-				{{end}}
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto">
+					{{if .user}}
+						<li class="nav-item">
+							<a class="nav-link" href="/admin">Admin</a>
+						</li>
+					{{end}}
+					</ul>
+					<form class="d-flex">
+					{{if .user}}
+						<a href="/logout"><button type="button" class="btn btn-dark me-2">Logout</button></a>
+					{{else}}
+						<a href="/login"><button type="button" class="btn btn-dark me-2">Login</button></a>
+					{{end}}
+					</form>
+				</div>
 			</div>
 		</nav>
 {{end}}

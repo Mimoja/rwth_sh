@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	. "go-link-shortener/server/database"
 	"go-link-shortener/server/globals"
+	"go-link-shortener/server/router"
 	"log"
 	"net/http"
 
@@ -26,4 +28,14 @@ func LogoutGetHandler(c *gin.Context) {
 	}
 
 	c.Redirect(http.StatusMovedPermanently, "/")
+}
+
+func AdminGetHandler(c *gin.Context) {
+	session := sessions.Default(c)
+	user := session.Get(globals.Userkey)
+
+	c.HTML(http.StatusOK, "admin", gin.H{
+		"URLCount": router.GetURLCount(Database),
+		"user":     user,
+	})
 }
