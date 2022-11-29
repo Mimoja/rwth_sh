@@ -1,0 +1,63 @@
+{{define "url-edit-modal"}}
+<div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="urlModalLabel">New URL</h5>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="mb-3">
+						<label for="origin-url" class="form-label">Origin URL</label>
+						<div class="input-group" id="origin-url" aria-descripedby="origin-url-help">
+							<input type="text" class="form-control" id="subdomainInput" placeholder="Subdomain">
+							<span class="input-group-text"><code>.{{ .hostname }}/</code></span>
+							<input type="text" class="form-control" id="pathInput" placeholder="Path">
+						</div>
+						<div id="origin-url-help" class="form-text">
+							You can also leave the subdomain or path blank
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="targetInput" class="form-label">Target URL</label>
+						<input type="url" class="form-control" id="targetInput" placeholder="https://example.com">
+					</div>
+					<div class="mb-3">
+						<label for="commentInput" class="form-label">Comment</label>
+						<textarea class="form-control" id="commentInput" style="height: 100px"></textarea>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="acceptBtn">Create URL</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+const urlModal = document.getElementById('urlModal')
+const _originalHTML = urlModal.innerHTML
+urlModal.addEventListener('show.bs.modal', function (event) {
+	// Button that triggered the modal
+	let button = event.relatedTarget
+
+	// check if button is an edit button / has data
+	if (button.hasAttribute('data-bs-edit-with')) {
+		let data = JSON.parse(button.getAttribute('data-bs-edit-with'))
+
+		urlModal.querySelector("#urlModalLabel").textContent = `Edit URL - #${data.Id}`
+		urlModal.querySelector("#acceptBtn").textContent = "Save"
+
+		urlModal.querySelector("#subdomainInput").value = data.Subdomain
+		urlModal.querySelector("#pathInput").value = data.Path
+		urlModal.querySelector("#targetInput").value = data.Target
+		urlModal.querySelector("#commentInput").value = data.Comment
+	} else {
+		urlModal.innerHTML = _originalHTML
+	}
+})
+</script>
+{{end}}

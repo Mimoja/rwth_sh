@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-link-shortener/server/database"
 	. "go-link-shortener/server/database"
 	"go-link-shortener/server/globals"
 	"go-link-shortener/server/router"
@@ -34,8 +35,12 @@ func AdminGetHandler(c *gin.Context) {
 	session := sessions.Default(c)
 	user := session.Get(globals.Userkey)
 
+	rows := router.GetStoredURLs(database.Database)
+
 	c.HTML(http.StatusOK, "admin", gin.H{
 		"URLCount": router.GetURLCount(Database),
 		"user":     user,
+		"rows":     rows,
+		"hostname": globals.Config.Server.Hostname,
 	})
 }
