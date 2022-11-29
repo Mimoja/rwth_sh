@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	. "go-link-shortener/server/database"
+	"go-link-shortener/server/globals"
 )
 
 var InsertUniqueError = errors.New("Unique constraint failed")
@@ -27,7 +28,9 @@ func InitShortener() {
 }
 
 func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
-	url, err := getURL(Database, r.Host, r.RequestURI[1:])
+	idx := strings.LastIndex(r.Host, globals.Config.Server.Hostname)
+	subdomain := strings.TrimRight(r.Host[:idx], ".")
+	url, err := getURL(Database, subdomain, r.RequestURI[1:])
 	if err != nil {
 		http.Error(w, "Not found", 404)
 	}
@@ -50,9 +53,13 @@ func InsertOrUpdateURL(db *sql.DB, entry DomainRow, update bool) error {
 	}
 
 	if update {
-		_, err = statement.Exec(entry.Subdomain, entry.Path, entry.Target, entry.Comment, entry.Id)
+		_, err = statement.Exec(
+			strings.ToLower(entry.Subdomain), strings.ToLower(entry.Path),
+			entry.Target, entry.Comment, entry.Id)
 	} else {
-		_, err = statement.Exec(entry.Subdomain, entry.Path, entry.Target, entry.Comment)
+		_, err = statement.Exec(
+			strings.ToLower(entry.Subdomain), strings.ToLower(entry.Path),
+			entry.Target, entry.Comment)
 	}
 
 	if err != nil {
@@ -110,15 +117,16 @@ func printStoredURLs(db *sql.DB) {
 	}
 }
 
-func getURL(db *sql.DB, domain string, short string) (string, error) {
-	row := db.QueryRow("SELECT target FROM urls WHERE domain=? AND short=?", domain, short)
+func getURL(db *sql.DB, subdomain string, path string) (string, error) {
+	row := db.QueryRow("SELECT target FROM urls WHERE subdomain=? AND path=?",
+		strings.ToLower(subdomain), strings.ToLower(path))
 	if row == nil {
 		return "", fmt.Errorf("Failed to querry row")
 	}
 
 	// Parse row into Activity struct
 	var target string
-	if err := row.Scan(target); err == sql.ErrNoRows {
+	if err := row.Scan(&target); err == sql.ErrNoRows || target == "" {
 		log.Printf("Id not found")
 		return "", sql.ErrNoRows
 	}
