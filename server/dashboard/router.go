@@ -30,8 +30,6 @@ func PrivateRoutes(g *gin.RouterGroup) {
 }
 
 func GetDashboardRouter() *gin.Engine {
-	gin.SetMode(gin.DebugMode)
-
 	router := gin.Default()
 	router.Static("/static/", "./static")
 	// setup templating and define custom template function
