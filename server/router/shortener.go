@@ -29,6 +29,7 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 
 	if idx == -1 {
 		http.Error(w, "Request with invalid hostname", 500)
+		return
 	}
 
 	subdomain := strings.TrimRight(r.Host[:idx], ".")
@@ -36,6 +37,7 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 	url, err := getURL(Database, subdomain, r.RequestURI[1:])
 	if err != nil {
 		http.Error(w, "Not found", 404)
+		return
 	}
 
 	http.Redirect(w, r, url, http.StatusFound)
