@@ -2,8 +2,6 @@ version: "3.3"
 services:
   link-shortener:
     build: .
-    ports:
-      - 9000:9000
     environment:
       LS_DASHBOARD_SUBDOMAIN: dashboard
       LS_DASHBOARD_ADMIN: admin
