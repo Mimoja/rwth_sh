@@ -14,7 +14,7 @@ func AuthRequired(c *gin.Context) {
 
 	if user == nil {
 		log.Println("User not logged in")
-		c.Redirect(http.StatusMovedPermanently, "/login")
+		c.Redirect(http.StatusTemporaryRedirect, "/login")
 		c.Abort()
 		return
 	}
