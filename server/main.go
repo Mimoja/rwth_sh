@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-link-shortener/server/common"
 	. "go-link-shortener/server/database"
 	"go-link-shortener/server/globals"
 
@@ -15,15 +16,17 @@ func main() {
 	appConf := globals.ConfigInit("config.yaml")
 	globals.Config = *appConf
 
-	hostAndPort := fmt.Sprintf("%s:%d", appConf.Server.Hostname, appConf.Server.Port)
-	log.Printf("Starting http server on %s\n", hostAndPort)
+	log.Printf("Starting http server on %s\n", common.GetHostname())
 
 	InitDatabase(appConf.Database.Path)
 	InitShortener()
 
 	multidom := make(MultiDomainRouter)
 
-	dashboard_url := fmt.Sprintf("%s.%s", appConf.Dashboard.Subdomain, hostAndPort)
+	dashboard_url := common.GetHostname()
+	if appConf.Dashboard.Subdomain != "" {
+		dashboard_url = fmt.Sprintf("%s.%s", appConf.Dashboard.Subdomain, dashboard_url)
+	}
 	multidom[dashboard_url] = dashboard.GetDashboardRouter()
 
 	defer Database.Close()
