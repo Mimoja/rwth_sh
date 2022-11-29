@@ -31,3 +31,10 @@ function logout() {
     window.location = "/"
   }, 500)
 }
+
+function generateUUID(length) {
+  const s = "abcdefghijklmnopqrstuvwxyz"
+  return Array(length).join().split(",").map(() => {
+    return s.charAt(Math.floor(Math.random() * s.length));
+  }).join('')
+}

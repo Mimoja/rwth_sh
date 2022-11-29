@@ -13,6 +13,7 @@
 							<input type="text" class="form-control" id="subdomainInput" placeholder="Subdomain">
 							<span class="input-group-text"><code>.{{ .hostname }}/</code></span>
 							<input type="text" class="form-control" id="pathInput" placeholder="Path">
+							<button class="btn btn-outline-secondary" type="button" id="shufflePathBtn">🎲</button>
 						</div>
 						<div id="origin-url-help" class="form-text">
 							You can also leave the subdomain or path blank
@@ -57,6 +58,10 @@ urlModal.addEventListener('show.bs.modal', function (event) {
 		urlModal.querySelector("#commentInput").value = data.Comment
 	} else {
 		urlModal.innerHTML = _originalHTML
+	}
+
+	urlModal.querySelector("#shufflePathBtn").onclick = () => {
+		urlModal.querySelector("#pathInput").value = generateUUID(8)
 	}
 })
 </script>
