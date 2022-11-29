@@ -14,6 +14,7 @@ import (
 type AppConfig struct {
 	Dashboard struct {
 		Subdomain string
+		Showport  bool
 		Admin     struct {
 			Username string
 			Password string

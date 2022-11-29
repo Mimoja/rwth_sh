@@ -16,14 +16,14 @@ func main() {
 	appConf := globals.ConfigInit("config.yaml")
 	globals.Config = *appConf
 
-	log.Printf("Starting http server on %s\n", common.GetHostname())
+	log.Printf("Starting http server on %s\n", common.GetHostnameWithPort(true))
 
 	InitDatabase(appConf.Database.Path)
 	InitShortener()
 
 	multidom := make(MultiDomainRouter)
 
-	dashboard_url := common.GetHostname()
+	dashboard_url := appConf.Server.Hostname
 	if appConf.Dashboard.Subdomain != "" {
 		dashboard_url = fmt.Sprintf("%s.%s", appConf.Dashboard.Subdomain, dashboard_url)
 	}

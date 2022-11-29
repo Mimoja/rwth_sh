@@ -1,5 +1,6 @@
 dashboard:
   subdomain: dashboard
+  showport: false
 
   admin:
     username: SOMEUSER
