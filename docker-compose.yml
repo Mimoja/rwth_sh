@@ -4,7 +4,7 @@ services:
     build: .
     environment:
       LS_DASHBOARD_SUBDOMAIN: dashboard
-      LS_DASHBOARD_ADMIN_USER: admin
+      LS_DASHBOARD_ADMIN_USERNAME: admin
       LS_DASHBOARD_SHOWPORT: "false"
       LS_SERVER_HOSTNAME: hostname
       LS_SERVER_PORT: 9000
