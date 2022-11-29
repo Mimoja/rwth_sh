@@ -17,6 +17,7 @@ func main() {
 	globals.Config = *appConf
 
 	log.Printf("Starting http server on %s\n", common.GetHostnameWithPort(true))
+	log.Printf("User: %s [%s]", appConf.Dashboard.Admin.Username, appConf.Dashboard.Admin.Password)
 
 	InitDatabase(appConf.Database.Path)
 	InitShortener()
