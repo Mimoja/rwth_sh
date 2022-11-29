@@ -4,36 +4,42 @@
 	<div class="container">
 		<div class="col-md-12 mb-4">
 			<div class="row justify-content-between">
-				<div class="col-8">
+				<div class="col-6">
 					<h2>URL overview</h2>
 				</div>
-				<div class="col-1">
+				<div class="col-2">
 					<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#urlModal">Add</button>
 				</div>
 			</div>
-			<table class="table">
-				<thead>
-					<th scope="col">ID</th>
-					<th scope="col">Address</th>
-					<th scope="col">Target</th>
-					<th scope="col">Comment</th>
-					<th scope="col">Actions</th>
-				</thead>
-				<tbody>
-				{{range .rows}}
-					<tr>
-						<th scope="row">{{.Id}}</th>
-						<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ getHostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
-						<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
-						<td>{{.Comment}}</td>
-						<td>
-<button type="button" class="btn btn-sm btn-outline-warning bi bi-pencil" data-bs-toggle="modal" data-bs-target="#urlModal" data-bs-edit-with="{{ . | struct2json }}"></button>
-<button type="button" class="btn btn-sm btn-outline-danger bi bi-trash" id="delete-btn" data-bs-id="{{.Id}}"></button>
-						</td>
-					</tr>
-				{{end}}
-				</tbody>
-			</table>
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<th scope="col">ID</th>
+						<th scope="col">Address</th>
+						<th scope="col">Target</th>
+						<th scope="col">Comment</th>
+						<th scope="col">Actions</th>
+					</thead>
+					<tbody>
+					{{range .rows}}
+						<tr>
+							<th scope="row">{{.Id}}</th>
+							<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ getHostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
+							<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
+							<td>
+								<div class="line-clamp" style="max-width: 300px;">
+									{{.Comment}}
+								</div>
+							</td>
+							<td>
+	<button type="button" class="btn btn-sm btn-outline-warning bi bi-pencil" data-bs-toggle="modal" data-bs-target="#urlModal" data-bs-edit-with="{{ . | struct2json }}"></button>
+	<button type="button" class="btn btn-sm btn-outline-danger bi bi-trash" id="delete-btn" data-bs-id="{{.Id}}"></button>
+							</td>
+						</tr>
+					{{end}}
+					</tbody>
+				</table>
+			</div>
 
 			<script>
 				document.querySelectorAll("#delete-btn").forEach((e) => {
