@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  link-shortener:
+    build: .
+    ports:
+      - 9000:9000
+    environment:
+      LS_DASHBOARD_SUBDOMAIN: dashboard
+      LS_DASHBOARD_ADMIN: admin
+      LS_DASHBOARD_SHOWPORT: "false"
+      LS_SERVER_HOSTNAME: hostname
+      LS_SERVER_PORT: 9000
+      LS_DATABASE_PATH: "/data/url-database.db"
+    volumes:
+      - ${PWD}/data:/data
