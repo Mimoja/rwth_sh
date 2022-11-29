@@ -23,8 +23,8 @@
 				{{range .rows}}
 					<tr>
 						<th scope="row">{{.Id}}</th>
-						<td>{{.Subdomain}}{{if .Path}}/{{.Path}}{{end}}</td>
-						<td>{{.Target}}</td>
+						<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ $.hostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
+						<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
 						<td>{{.Comment}}</td>
 						<td>
 <button type="button" class="btn btn-sm btn-outline-warning bi bi-pencil" data-bs-toggle="modal" data-bs-target="#urlModal" data-bs-edit-with='{{ . | struct2json }}'></button>
