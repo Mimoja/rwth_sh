@@ -34,6 +34,10 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 
 	subdomain := strings.TrimRight(r.Host[:idx], ".")
 
+	if subdomain == "" && r.RequestURI[1:] == "" {
+		http.Redirect(w, r, "https://"+globals.DashboardURL, http.StatusFound)
+	}
+
 	url, err := getURL(Database, subdomain, r.RequestURI[1:])
 	if err != nil {
 		http.Error(w, "Not found", 404)

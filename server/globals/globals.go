@@ -20,3 +20,5 @@ var Secret = getRandomBytes(64)
 const Userkey = "user"
 
 var Config AppConfig
+
+var DashboardURL string

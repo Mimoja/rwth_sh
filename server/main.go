@@ -29,6 +29,7 @@ func main() {
 		dashboard_url = fmt.Sprintf("%s.%s", appConf.Dashboard.Subdomain, dashboard_url)
 	}
 	multidom[dashboard_url] = dashboard.GetDashboardRouter()
+	globals.DashboardURL = dashboard_url
 
 	defer Database.Close()
 
