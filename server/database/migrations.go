@@ -16,7 +16,12 @@ var noChangeError = errors.New("no change")
 
 func RunMigrations(db *sql.DB) {
 	log.Println("Running migrations")
-	driver, _ := sqlite3.WithInstance(db, &sqlite3.Config{})
+
+	driver, err := sqlite3.WithInstance(db, &sqlite3.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://server/database/migrations", "sqlite3", driver)
 
