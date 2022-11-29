@@ -38,10 +38,12 @@
 						</li>
 					{{end}}
 					</ul>
-					<form class="d-flex">
+					<div class="d-flex">
 					{{if .user}}
 						<button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#urlModal">Add</button>
-						<a href="/logout"><button type="button" class="btn btn-dark me-2">Logout</button></a>
+						<form action="/logout" method="post">
+							<button type="submit" name="whatever" class="btn btn-dark me-2">Logout</button>
+						</div>
 					{{else}}
 						<a href="/login"><button type="button" class="btn btn-dark me-2">Login</button></a>
 					{{end}}

@@ -21,7 +21,7 @@ func PublicRoutes(g *gin.RouterGroup) {
 
 func PrivateRoutes(g *gin.RouterGroup) {
 	g.GET("/dashboard", handlers.IndexGetHandler)
-	g.GET("/logout", handlers.LogoutGetHandler)
+	g.POST("/logout", handlers.LogoutGetHandler)
 	g.GET("/admin", handlers.AdminGetHandler)
 
 	g.POST("/api/url/add", handlers.AddURLPostHandler)
