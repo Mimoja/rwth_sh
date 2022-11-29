@@ -1,10 +1,13 @@
 package dashboard
 
 import (
+	"text/template"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 
+	"go-link-shortener/server/common"
 	"go-link-shortener/server/dashboard/handlers"
 	"go-link-shortener/server/dashboard/middleware"
 	"go-link-shortener/server/globals"
@@ -27,6 +30,10 @@ func GetDashboardRouter() *gin.Engine {
 
 	router := gin.Default()
 	router.Static("/static/", "./static")
+	// setup templating and define custom template function
+	router.SetFuncMap(template.FuncMap{
+		"struct2json": common.Struct2JSON,
+	})
 	router.LoadHTMLGlob("templates/*.tmpl")
 
 	router.Use(sessions.Sessions("sessions", cookie.NewStore(globals.Secret)))
