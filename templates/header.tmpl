@@ -35,7 +35,6 @@
 					{{if .user}}
 						<button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#urlModal">Add</button>
 						<a href="/logout"><button type="button" class="btn btn-dark me-2">Logout</button></a>
-						{{ template "url-edit-modal" . }}
 					{{else}}
 						<a href="/login"><button type="button" class="btn btn-dark me-2">Login</button></a>
 					{{end}}

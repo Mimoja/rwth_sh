@@ -40,59 +40,61 @@
 </div>
 
 <script>
-const urlModal = document.getElementById('urlModal')
-const _originalHTML = urlModal.innerHTML
-urlModal.addEventListener('show.bs.modal', function (event) {
-	// Button that triggered the modal
-	let button = event.relatedTarget
-	let update_data = undefined 
+	window.addEventListener('load', function () {
+	const urlModal = document.getElementById('urlModal')
+	const _originalHTML = urlModal.innerHTML
+	urlModal.addEventListener('show.bs.modal', function (event) {
+		// Button that triggered the modal
+		let button = event.relatedTarget
+		let update_data = undefined 
 
-	// check if button is an edit button / has data
-	if (button.hasAttribute('data-bs-edit-with')) {
-		update_data = JSON.parse(button.getAttribute('data-bs-edit-with'))
+		// check if button is an edit button / has data
+		if (button.hasAttribute('data-bs-edit-with')) {
+			update_data = JSON.parse(button.getAttribute('data-bs-edit-with'))
 
-		urlModal.querySelector("#urlModalLabel").textContent = `Edit URL - #${update_data.Id}`
-		urlModal.querySelector("#acceptBtn").textContent = "Save"
+			urlModal.querySelector("#urlModalLabel").textContent = `Edit URL - #${update_data.Id}`
+			urlModal.querySelector("#acceptBtn").textContent = "Save"
 
-		urlModal.querySelector("#subdomainInput").value = update_data.Subdomain
-		urlModal.querySelector("#pathInput").value = update_data.Path
-		urlModal.querySelector("#targetInput").value = update_data.Target
-		urlModal.querySelector("#commentInput").value = update_data.Comment
-	} else {
-		urlModal.innerHTML = _originalHTML
-	}
-
-	urlModal.querySelector("#shufflePathBtn").onclick = () => {
-		urlModal.querySelector("#pathInput").value = generateUUID(8)
-	}
-
-	urlModal.querySelector("#acceptBtn").onclick = () => {
-		let form = urlModal.querySelector("#data-form")
-		let data = Object.fromEntries(new FormData(form).entries())
-
-		if (update_data != undefined) {
-			data["id"] = update_data["Id"]
+			urlModal.querySelector("#subdomainInput").value = update_data.Subdomain
+			urlModal.querySelector("#pathInput").value = update_data.Path
+			urlModal.querySelector("#targetInput").value = update_data.Target
+			urlModal.querySelector("#commentInput").value = update_data.Comment
 		} else {
-			data["id"] = 0
+			urlModal.innerHTML = _originalHTML
 		}
 
-		let httpReq = new XMLHttpRequest();
-		httpReq.onreadystatechange = () => {
-			if (httpReq.readyState == httpReq.DONE) {
-				if (httpReq.status != 200) {
-					let message = JSON.parse(httpReq.responseText)
-					urlModal.querySelector("#error-text").innerText = message.message
-				} else {
-					bootstrap.Modal.getInstance(urlModal).hide()
-					window.location.reload()
+		urlModal.querySelector("#shufflePathBtn").onclick = () => {
+			urlModal.querySelector("#pathInput").value = generateUUID(8)
+		}
+
+		urlModal.querySelector("#acceptBtn").onclick = () => {
+			let form = urlModal.querySelector("#data-form")
+			let data = Object.fromEntries(new FormData(form).entries())
+
+			if (update_data != undefined) {
+				data["id"] = update_data["Id"]
+			} else {
+				data["id"] = 0
+			}
+
+			let httpReq = new XMLHttpRequest();
+			httpReq.onreadystatechange = () => {
+				if (httpReq.readyState == httpReq.DONE) {
+					if (httpReq.status != 200) {
+						let message = JSON.parse(httpReq.responseText)
+						urlModal.querySelector("#error-text").innerText = message.message
+					} else {
+						bootstrap.Modal.getInstance(urlModal).hide()
+						window.location.reload()
+					}
 				}
 			}
-		}
 
-		httpReq.open("POST", (update_data != undefined) ? "/api/url/update" : "/api/url/add", true)
-		httpReq.setRequestHeader('Content-Type', 'application/json')
-		httpReq.send(JSON.stringify(data))
-	}
+			httpReq.open("POST", (update_data != undefined) ? "/api/url/update" : "/api/url/add", true)
+			httpReq.setRequestHeader('Content-Type', 'application/json')
+			httpReq.send(JSON.stringify(data))
+		}
+	})
 })
 </script>
 {{end}}

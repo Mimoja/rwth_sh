@@ -1,4 +1,7 @@
 {{define "footer"}}
+	{{ if .user }}
+		{{ template "url-edit-modal" . }}
+	{{ end }}
 		</body>
 	</html>
 {{end}}
