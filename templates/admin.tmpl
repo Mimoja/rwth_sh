@@ -27,8 +27,8 @@
 						<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
 						<td>{{.Comment}}</td>
 						<td>
-<button type="button" class="btn btn-sm btn-outline-warning bi bi-pencil" data-bs-toggle="modal" data-bs-target="#urlModal" data-bs-edit-with='{{ . | struct2json }}'></button>
-							<button type="button" class="btn btn-sm btn-outline-danger bi bi-trash"></button>
+<button type="button" class="btn btn-sm btn-outline-warning bi bi-pencil" data-bs-toggle="modal" data-bs-target="#urlModal" data-bs-edit-with="{{ . | struct2json }}"></button>
+<button type="button" class="btn btn-sm btn-outline-danger bi bi-trash" id="delete-btn" data-bs-id="{{.Id}}"></button>
 						</td>
 					</tr>
 				{{end}}
@@ -36,6 +36,27 @@
 			</table>
 
 			{{template "url-edit-modal" .}}
+			<script>
+				document.querySelectorAll("#delete-btn").forEach((e) => {
+					e.onclick = () => {
+						let httpx = new XMLHttpRequest()
+						httpx.onreadystatechange = () => {
+							if (httpx.readyState == httpx.DONE) {
+								if (httpx.status != 200) {
+									let message = JSON.parse(httpx.responseText)
+									alert(message.message)
+								} else {
+									window.location.reload()
+								}
+							}
+						}
+
+						httpx.open("POST", "/api/url/delete", true)
+						httpx.setRequestHeader("Content-Type", "application/json")
+						httpx.send(JSON.stringify({"id": parseInt(e.getAttribute("data-bs-id"))}))
+					}
+				})
+			</script>
 		</div>
 	</div>
 {{template "footer" .}}

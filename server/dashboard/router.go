@@ -23,6 +23,10 @@ func PrivateRoutes(g *gin.RouterGroup) {
 	g.GET("/dashboard", handlers.IndexGetHandler)
 	g.GET("/logout", handlers.LogoutGetHandler)
 	g.GET("/admin", handlers.AdminGetHandler)
+
+	g.POST("/api/url/add", handlers.AddURLPostHandler)
+	g.POST("/api/url/delete", handlers.DeleteURLPostHandler)
+	g.POST("/api/url/update", handlers.UpdateURLPostHandler)
 }
 
 func GetDashboardRouter() *gin.Engine {

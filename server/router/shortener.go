@@ -13,6 +13,7 @@ import (
 )
 
 var InsertUniqueError = errors.New("Unique constraint failed")
+var NothingChangedError = errors.New("Nothing changed - invalid ID?")
 
 type DomainRow struct {
 	Subdomain, Path, Target, Comment string
@@ -20,10 +21,6 @@ type DomainRow struct {
 }
 
 func InitShortener() {
-	InsertURL(Database, DomainRow{"", "abc", "https://google.com", "test entry", 0})
-	InsertURL(Database, DomainRow{"abc", "abc", "https://google.com", "test entry 2", 0})
-	InsertURL(Database, DomainRow{"o", "", "https://online.rwth-aachen.de", "test entry 2", 0})
-
 	printStoredURLs(Database)
 }
 
@@ -39,11 +36,11 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // We are passing db reference connection from main to our method with other parameters
-func InsertOrUpdateURL(db *sql.DB, entry DomainRow, update bool) error {
+func InsertOrUpdateURL(db *sql.DB, entry *DomainRow, update bool) error {
 	log.Println("Inserting url record ...")
 	query := `INSERT INTO urls(subdomain, path, target, comment) VALUES (?, ?, ?, ?)`
 	if update {
-		query = `UPDATE urls subdomain=?, path=?, target=?, comment=? WHERE id=?`
+		query = `UPDATE urls SET subdomain=?, path=?, target=?, comment=? WHERE id=?`
 	}
 
 	statement, err := db.Prepare(query) // Prepare statement.
@@ -52,12 +49,13 @@ func InsertOrUpdateURL(db *sql.DB, entry DomainRow, update bool) error {
 		log.Fatalln("Prepare failed", err.Error())
 	}
 
+	var result sql.Result = nil
 	if update {
-		_, err = statement.Exec(
+		result, err = statement.Exec(
 			strings.ToLower(entry.Subdomain), strings.ToLower(entry.Path),
 			entry.Target, entry.Comment, entry.Id)
 	} else {
-		_, err = statement.Exec(
+		result, err = statement.Exec(
 			strings.ToLower(entry.Subdomain), strings.ToLower(entry.Path),
 			entry.Target, entry.Comment)
 	}
@@ -69,11 +67,34 @@ func InsertOrUpdateURL(db *sql.DB, entry DomainRow, update bool) error {
 			log.Panic(err)
 		}
 	}
+	if res, _ := result.RowsAffected(); res == 0 {
+		return NothingChangedError
+	}
+
 	return nil
 }
 
-func InsertURL(db *sql.DB, entry DomainRow) error {
+func InsertURL(db *sql.DB, entry *DomainRow) error {
 	return InsertOrUpdateURL(db, entry, false)
+}
+
+func DeleteURL(db *sql.DB, id uint32) error {
+	log.Println("Deleting URL with id:", id)
+	query := "DELETE FROM urls WHERE id=?"
+
+	statement, err := db.Prepare(query)
+	if err != nil {
+		log.Fatalln("Prepare failed", err.Error())
+	}
+
+	result, err := statement.Exec(id)
+	if err != nil {
+		return nil
+	} else if res, _ := result.RowsAffected(); res == 0 {
+		return NothingChangedError
+	} else {
+		return nil
+	}
 }
 
 func GetURLCount(db *sql.DB) int {
