@@ -23,7 +23,7 @@
 				{{range .rows}}
 					<tr>
 						<th scope="row">{{.Id}}</th>
-						<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ $.hostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
+						<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ getHostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
 						<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
 						<td>{{.Comment}}</td>
 						<td>
