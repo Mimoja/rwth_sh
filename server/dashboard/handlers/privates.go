@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"go-link-shortener/server/database"
 	. "go-link-shortener/server/database"
 	"go-link-shortener/server/globals"
@@ -38,15 +37,9 @@ func AdminGetHandler(c *gin.Context) {
 
 	rows := router.GetStoredURLs(database.Database)
 
-	hostname := globals.Config.Server.Hostname
-	if globals.Config.Server.Port != 443 {
-		hostname = fmt.Sprintf("%s:%d", globals.Config.Server.Hostname, globals.Config.Server.Port)
-	}
-
 	c.HTML(http.StatusOK, "admin", gin.H{
 		"URLCount": router.GetURLCount(Database),
 		"user":     user,
 		"rows":     rows,
-		"hostname": hostname,
 	})
 }

@@ -11,7 +11,7 @@
 						<label for="origin-url" class="form-label">Origin URL</label>
 						<div class="input-group" id="origin-url" aria-descripedby="origin-url-help">
 							<input type="text" class="form-control" id="subdomainInput" placeholder="Subdomain" name="subdomain">
-							<span class="input-group-text"><code>.{{ .hostname }}/</code></span>
+							<span class="input-group-text"><code>.{{ getHostname }}/</code></span>
 							<input type="text" class="form-control" id="pathInput" placeholder="Path" name="path">
 							<button class="btn btn-outline-secondary" type="button" id="shufflePathBtn">🎲</button>
 						</div>
