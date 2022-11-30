@@ -22,6 +22,7 @@ var NothingChangedError = errors.New("Nothing changed - invalid ID?")
 type DomainRow struct {
 	Subdomain, Path, Target, Comment string
 	Id                               uint32
+	IsPublic                         bool
 }
 
 func InitShortener() {
@@ -63,9 +64,9 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 // We are passing db reference connection from main to our method with other parameters
 func InsertOrUpdateURL(db *sql.DB, entry *DomainRow, update bool) error {
 	log.Println("Inserting url record ...")
-	query := `INSERT INTO urls(subdomain, path, target, comment) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO urls(subdomain, path, target, comment, is_public) VALUES (?, ?, ?, ?, ?)`
 	if update {
-		query = `UPDATE urls SET subdomain=?, path=?, target=?, comment=? WHERE id=?`
+		query = `UPDATE urls SET subdomain=?, path=?, target=?, comment=?, is_public=? WHERE id=?`
 	}
 
 	statement, err := db.Prepare(query) // Prepare statement.
@@ -77,9 +78,10 @@ func InsertOrUpdateURL(db *sql.DB, entry *DomainRow, update bool) error {
 	subdomain, path := common.PrepareURI(entry.Subdomain, entry.Path)
 	var result sql.Result = nil
 	if update {
-		result, err = statement.Exec(subdomain, path, entry.Target, entry.Comment, entry.Id)
+		result, err = statement.Exec(
+			subdomain, path, entry.Target, entry.Comment, entry.IsPublic, entry.Id)
 	} else {
-		result, err = statement.Exec(subdomain, path, entry.Target, entry.Comment)
+		result, err = statement.Exec(subdomain, path, entry.Target, entry.Comment, entry.IsPublic)
 	}
 
 	if err != nil {
@@ -146,7 +148,7 @@ func GetStoredURLs(db *sql.DB) []DomainRow {
 	for row.Next() {
 		var domainRow DomainRow
 
-		row.Scan(&domainRow.Subdomain, &domainRow.Path, &domainRow.Target, &domainRow.Comment, &domainRow.Id)
+		row.Scan(&domainRow.Subdomain, &domainRow.Path, &domainRow.Target, &domainRow.Comment, &domainRow.Id, &domainRow.IsPublic)
 		result = append(result, domainRow)
 	}
 	return result
@@ -156,7 +158,9 @@ func printStoredURLs(db *sql.DB) {
 	rows := GetStoredURLs(db)
 	println("Stored URLs:", len(rows))
 	for _, r := range rows {
-		fmt.Printf("%d: %s.HOST/%s -> %s [%s]\n", r.Id, r.Subdomain, r.Path, r.Target, r.Comment)
+		fmt.Printf(
+			"%d: %s.HOST/%s -> %s [%s] (%t)\n",
+			r.Id, r.Subdomain, r.Path, r.Target, r.Comment, r.IsPublic)
 	}
 }
 

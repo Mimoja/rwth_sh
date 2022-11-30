@@ -1,0 +1,1 @@
+ALTER TABLE urls ADD "is_public" INTEGER DEFAULT(0);

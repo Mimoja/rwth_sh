@@ -1,5 +1,5 @@
 {{define "url-edit-modal"}}
-<div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
+<div class="modal fade modal-lg" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -27,6 +27,13 @@
 					<div class="mb-3">
 						<label for="commentInput" class="form-label">Comment</label>
 						<textarea class="form-control" id="commentInput" style="height: 100px" name="comment"></textarea>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Other Attributes</label>
+						<div class="form-check form-switch mb-3">
+							<input class="form-check-input" role="switch" type="checkbox" value="" name="is-public" id="isPublicInput">
+							<label class="form-check-label" for="isPublicInput">is public label</label>
+						</div>
 					</div>
 				</form>
 				<span class="text-danger" id="error-text"></span>
@@ -59,6 +66,7 @@
 			urlModal.querySelector("#pathInput").value = update_data.Path
 			urlModal.querySelector("#targetInput").value = update_data.Target
 			urlModal.querySelector("#commentInput").value = update_data.Comment
+			urlModal.querySelector("#isPublicInput").checked = update_data.IsPublic
 		} else {
 			urlModal.innerHTML = _originalHTML
 		}
@@ -71,11 +79,23 @@
 			let form = urlModal.querySelector("#data-form")
 			let data = Object.fromEntries(new FormData(form).entries())
 
+			/* checkboxes need some extra code, as forms have some weird
+			behavior in recards to their working.
+			Essentialy: the name of the checkbox is included in the form
+			with their value attribute, iff they are checked. Otherwise the
+			property isn't mentioned at all in the form data.
+			As such I need to add them myself. */
+			urlModal.querySelectorAll("[type=checkbox]").forEach((e) => {
+				data[e.getAttribute("name")] = e.checked
+			})
+
+
 			if (update_data != undefined) {
 				data["id"] = update_data["Id"]
 			} else {
 				data["id"] = 0
 			}
+
 
 			let httpReq = new XMLHttpRequest();
 			httpReq.onreadystatechange = () => {

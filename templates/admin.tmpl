@@ -14,7 +14,8 @@
 			<div class="table-responsive">
 				<table class="table">
 					<thead>
-						<th scope="col">ID</th>
+						<th scope="col" style="width: 0.5em"></th>
+						<th scope="col" style="width: 0.5em">ID</th>
 						<th scope="col">Address</th>
 						<th scope="col">Target</th>
 						<th scope="col">Comment</th>
@@ -23,11 +24,18 @@
 					<tbody>
 					{{range .rows}}
 						<tr>
-							<th scope="row">{{.Id}}</th>
+							<th scope="row">
+								{{ if .IsPublic }}
+									<i class="bi bi-eye-fill text-light"></i>
+								{{ else }}
+									<i class="bi bi-eye-slash-fill text-muted"></i>
+								{{ end }}
+							</th>
+							<td class="text-end">{{.Id}}</td>
 							<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ getHostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
 							<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
 							<td>
-								<div class="line-clamp" style="max-width: 300px;">
+								<div class="line-clamp" style="max-width: 300px;" title="{{.Comment}}">
 									{{.Comment}}
 								</div>
 							</td>

@@ -16,6 +16,7 @@ type URLEntry struct {
 	Path      string `json:"path"`
 	Target    string `json:"target-url"`
 	Comment   string `json:"comment"`
+	IsPublic  bool   `json:"is-public"`
 }
 
 func DeleteURLPostHandler(c *gin.Context) {
@@ -64,6 +65,7 @@ func handleURLAddOrUpdatePost(c *gin.Context, update bool) {
 		Path:      urlEntry.Path,
 		Target:    urlEntry.Target,
 		Comment:   urlEntry.Comment,
+		IsPublic:  urlEntry.IsPublic,
 		Id:        urlEntry.Id,
 	}
 
