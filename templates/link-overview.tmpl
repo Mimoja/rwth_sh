@@ -30,7 +30,10 @@
 				<a target="_blank" href="{{ .Target }}">{{ .Target }}</a>
 			</div>
 			<div class="col ms-3 ms-md-0">
-				<div class="line-clamp clamp-3 text-break" title="{{ .Comment }}">
+				<div 
+					class="line-clamp clamp-3 text-break 
+								 {{ if not .Comment }} d-none d-md-block {{ end }}" 
+					title="{{ .Comment }}">
 					<i class="bi bi-journal-text me-1 d-md-none"></i>
 					{{ if .Comment }} {{ .Comment }} {{ else }} - {{ end }}
 				</div>
