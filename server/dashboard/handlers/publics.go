@@ -5,6 +5,7 @@ import (
 	"go-link-shortener/server/globals"
 	"go-link-shortener/server/router"
 	"log"
+	"sort"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -50,6 +51,12 @@ func PublicOverviewGetHandler(c *gin.Context) {
 			pub_links = append(pub_links, e)
 		}
 	}
+	sort.Slice(pub_links, func(i, j int) bool {
+		if pub_links[i].Subdomain != pub_links[j].Subdomain {
+			return pub_links[i].Subdomain < pub_links[j].Subdomain
+		}
+		return pub_links[i].Path < pub_links[j].Path
+	})
 
 	c.HTML(http.StatusOK, "linkOverview", gin.H{
 		"URLCount": router.GetURLCount(Database),
