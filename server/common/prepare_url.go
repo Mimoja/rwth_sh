@@ -5,8 +5,13 @@ import "strings"
 func PrepSubdomain(v string) string {
 	v = strings.ToLower(v)
 
-	// replace all unicode characters that are … problematic
-	// looking at you ZWJ (domain encoding of ZWJ is problematic at best)
+	/* replace all unicode characters that are … problematic
+
+	ZWJ is being removed because there's not really consens
+	how this should be encoded. The answer in this issue gives
+	a small overview
+	https://github.com/mathiasbynens/punycode.js/issues/114#issuecomment-891935957
+	*/
 	v = strings.ReplaceAll(v, "\u200d", "")
 
 	return v
