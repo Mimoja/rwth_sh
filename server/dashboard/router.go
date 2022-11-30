@@ -34,8 +34,9 @@ func GetDashboardRouter() *gin.Engine {
 	router.Static("/static/", "./static")
 	// setup templating and define custom template function
 	router.SetFuncMap(template.FuncMap{
-		"struct2json": common.Struct2JSON,
-		"getHostname": common.GetHostname,
+		"struct2json":  common.Struct2JSON,
+		"getHostname":  common.GetHostname,
+		"buildAddress": common.BuildAddress,
 	})
 	router.LoadHTMLGlob("templates/*.tmpl")
 

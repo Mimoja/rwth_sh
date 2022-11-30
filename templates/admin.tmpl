@@ -32,10 +32,10 @@
 								{{ end }}
 							</th>
 							<td class="text-end">{{.Id}}</td>
-							<td><code>https://{{if .Subdomain}}{{.Subdomain}}.{{end}}{{ getHostname }}{{if .Path}}/{{.Path}}{{end}}</code></td>
+							<td><code>{{ buildAddress .Subdomain .Path }}</code></td>
 							<td><a target="_blank" href="{{.Target}}">{{.Target}}</a></td>
 							<td>
-								<div class="line-clamp" style="max-width: 300px;" title="{{.Comment}}">
+								<div class="line-clamp clamp-2" style="max-width: 300px;" title="{{.Comment}}">
 									{{.Comment}}
 								</div>
 							</td>

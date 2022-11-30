@@ -16,3 +16,16 @@ func GetHostnameWithPort(showport bool) string {
 	}
 	return hostname
 }
+
+func BuildAddress(subdomain, path string) string {
+	res := "https://"
+
+	if subdomain != "" {
+		res += subdomain + "."
+	}
+	res += GetHostname()
+	if path != "" {
+		res += "/" + path
+	}
+	return res
+}
