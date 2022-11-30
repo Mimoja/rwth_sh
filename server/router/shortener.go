@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	. "go-link-shortener/server/database"
 	"go-link-shortener/server/globals"
+
+	"golang.org/x/net/idna"
 )
 
 var InsertUniqueError = errors.New("Unique constraint failed")
@@ -38,7 +41,16 @@ func ShortenerHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://"+globals.DashboardURL, http.StatusFound)
 	}
 
-	url, err := getURL(Database, subdomain, r.RequestURI[1:])
+	// unescape unicode characters as Punycode in domain or URL encoding in URI
+	path, err1 := url.QueryUnescape(strings.TrimLeft(r.RequestURI, "/"))
+	subdomain, err2 := idna.ToUnicode(subdomain)
+
+	if err1 != nil || err2 != nil {
+		http.Error(w, "Malformed URI", 500)
+		return
+	}
+
+	url, err := getURL(Database, subdomain, path)
 	if err != nil {
 		http.Error(w, "Not found", 404)
 		return
