@@ -1,0 +1,44 @@
+{{define "linkOverview"}}
+{{template "header" .}}
+<div class="content">
+	<div class="container">
+		<div class="col-md-12 mb-4">
+			<h2>Public URLs</h2>
+			<p>The link shortener currently contains following public urls</p>
+		</div>
+
+		<div class="row row-cols-3 d-none d-md-flex pb-2 border-bottom border-1 border-dark">
+			<div class="col">
+				<b>Address</b>
+			</div>
+			<div class="col">
+				<b>Target</b>
+			</div>
+			<div class="col">
+				<b>Comment</b>
+			</div>
+		</div>
+		{{ range .links}}
+		<div class="row row-cols-1 row-cols-md-3 pt-2 pb-4 pb-mb-2">
+			<div class="col mb-1 mb-md-0 text-break">
+				<i class="bi bi-house me-1 d-md-none"></i>
+				{{ $addr := buildAddress .Subdomain .Path }}
+				<a href="{{ $addr }}">{{ $addr }}</a>
+			</div>
+			<div class="col ms-3 ms-md-0 mb-1 mb-md-0 text-break">
+				<i class="bi bi-link me-1 d-md-none"></i>
+				<a target="_blank" href="{{ .Target }}">{{ .Target }}</a>
+			</div>
+			<div class="col ms-3 ms-md-0">
+				<div class="line-clamp clamp-3 text-break" title="{{ .Comment }}">
+					<i class="bi bi-journal-text me-1 d-md-none"></i>
+					{{ if .Comment }} {{ .Comment }} {{ else }} - {{ end }}
+				</div>
+			</div>
+		</div>
+		<div class="border-bottom border-1 d-none d-md-block"></div>
+		{{ end }}
+	</div>
+</div>
+{{template "footer" .}}
+{{end}}

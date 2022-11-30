@@ -4,7 +4,10 @@
 	<div class="container">
 		<div class="col-md-12 mb-4">
 			<h2>RWTH Link Shortener</h2>
-			<div>{{.URLCount}} Links have been shortened</div>
+			<p>
+				{{.URLCount}} Links have been shortened. A list of all public URLs
+				can be found in the <a href="/overview">public URLs</a> overview page.
+			</p>
 		</div>
 	</div>
 {{template "footer" .}}

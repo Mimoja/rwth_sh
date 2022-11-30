@@ -16,6 +16,8 @@ import (
 func PublicRoutes(g *gin.RouterGroup) {
 	g.GET("/", handlers.IndexGetHandler)
 	g.GET("/login", handlers.LoginGetHandler)
+	g.GET("/overview", handlers.PublicOverviewGetHandler)
+
 	g.POST("/login", handlers.LoginPostHandler)
 }
 

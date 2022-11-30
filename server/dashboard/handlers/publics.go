@@ -37,3 +37,23 @@ func LoginGetHandler(c *gin.Context) {
 		})
 	}
 }
+
+func PublicOverviewGetHandler(c *gin.Context) {
+	session := sessions.Default(c)
+	user := session.Get(globals.Userkey)
+
+	links := router.GetStoredURLs(Database)
+	// filter array for elements that are public
+	pub_links := links[:0]
+	for _, e := range links {
+		if e.IsPublic {
+			pub_links = append(pub_links, e)
+		}
+	}
+
+	c.HTML(http.StatusOK, "linkOverview", gin.H{
+		"URLCount": router.GetURLCount(Database),
+		"user":     user,
+		"links":    pub_links,
+	})
+}
