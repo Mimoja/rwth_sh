@@ -25,11 +25,11 @@
 				{{ $addr := buildAddress .Subdomain .Path }}
 				<a href="{{ $addr }}">{{ $addr }}</a>
 			</div>
-			<div class="col ms-3 ms-md-0 mb-1 mb-md-0 text-break">
+			<div class="col ps-4 ms-1 ms-md-0 ps-0 ps-md-0 mb-1 mb-md-0 text-break">
 				<i class="bi bi-link me-1 d-md-none"></i>
 				<a target="_blank" href="{{ .Target }}">{{ .Target }}</a>
 			</div>
-			<div class="col ms-3 ms-md-0">
+			<div class="col ps-4 ms-1 ms-md-0 ps-md-0">
 				<div 
 					class="line-clamp clamp-3 text-break 
 								 {{ if not .Comment }} d-none d-md-block {{ end }}" 
