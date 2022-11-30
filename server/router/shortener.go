@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"go-link-shortener/server/common"
 	. "go-link-shortener/server/database"
 	"go-link-shortener/server/globals"
 
@@ -73,15 +74,12 @@ func InsertOrUpdateURL(db *sql.DB, entry *DomainRow, update bool) error {
 		log.Fatalln("Prepare failed", err.Error())
 	}
 
+	subdomain, path := common.PrepareURI(entry.Subdomain, entry.Path)
 	var result sql.Result = nil
 	if update {
-		result, err = statement.Exec(
-			strings.ToLower(entry.Subdomain), strings.ToLower(entry.Path),
-			entry.Target, entry.Comment, entry.Id)
+		result, err = statement.Exec(subdomain, path, entry.Target, entry.Comment, entry.Id)
 	} else {
-		result, err = statement.Exec(
-			strings.ToLower(entry.Subdomain), strings.ToLower(entry.Path),
-			entry.Target, entry.Comment)
+		result, err = statement.Exec(subdomain, path, entry.Target, entry.Comment)
 	}
 
 	if err != nil {
@@ -163,8 +161,9 @@ func printStoredURLs(db *sql.DB) {
 }
 
 func getURL(db *sql.DB, subdomain string, path string) (string, error) {
-	row := db.QueryRow("SELECT target FROM urls WHERE subdomain=? AND path=?",
-		strings.ToLower(subdomain), strings.ToLower(path))
+	subdomain, path = common.PrepareURI(subdomain, path)
+
+	row := db.QueryRow("SELECT target FROM urls WHERE subdomain=? AND path=?", subdomain, path)
 	if row == nil {
 		return "", fmt.Errorf("Failed to querry row")
 	}
